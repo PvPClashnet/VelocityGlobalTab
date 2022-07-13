@@ -1,6 +1,10 @@
 # GlobalTab
 A velocity plugin to customize your server's TabList
-[Yes, this readme needs to be improved]
+Original credit to @Gungadean
+
+# To do
+Animations, group sorting, hex color support for 1.16+
+Fix /globaltab restart - command doesnt work
 
 # Building
 
