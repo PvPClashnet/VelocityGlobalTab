@@ -2,6 +2,7 @@ package com.aang23.globaltab;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -73,6 +74,16 @@ public class GlobalTab {
 
     @Subscribe
     public void onLeave(DisconnectEvent event) {
+        if (server.getPlayerCount() > 0) {
+            for (int i = 0; i < server.getPlayerCount(); i++) {
+                Player currentPlayerToProcess = (Player) server.getAllPlayers().toArray()[i];
+                currentPlayerToProcess.getTabList().removeEntry(event.getPlayer().getUniqueId());
+            }
+        }
+    }
+
+    @Subscribe
+    public void onSwitch(ServerConnectedEvent event) {
         if (server.getPlayerCount() > 0) {
             for (int i = 0; i < server.getPlayerCount(); i++) {
                 Player currentPlayerToProcess = (Player) server.getAllPlayers().toArray()[i];
