@@ -29,8 +29,8 @@ public class ConfigManager {
     }
 
     public void setupConfig() {
-        if (!plugin.configspath.toFile().exists())
-            plugin.configspath.toFile().mkdirs();
+        if (!plugin.configspath.toFile().exists()) plugin.configspath.toFile().mkdirs();
+
         if (!new File(plugin.configspath.toString() + "/globaltab.json").exists()) {
             try {
                 writeInitialConfig();
@@ -80,15 +80,14 @@ public class ConfigManager {
 
     public boolean isServerAllowed(Optional<ServerConnection> server) {
         String name;
-        if (server.isPresent())
-            name = server.get().getServerInfo().getName();
-        else
-            return false;
+        if(!server.isPresent()) return false;
+
+        name = server.get().getServerInfo().getName();
 
         if (disabledServers != null)
             return !disabledServers.contains(name);
-        else
-            return true;
+
+        return true;
     }
 
     public List<String> getCustomTabs() {

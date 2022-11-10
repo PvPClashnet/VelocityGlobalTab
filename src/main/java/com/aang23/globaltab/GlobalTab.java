@@ -3,6 +3,7 @@ package com.aang23.globaltab;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -28,14 +29,14 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.UUID;
 
-@Plugin(id = "globaltab", name = "GlobalTab", version = "1.1.0", description = "A plugin", authors = { "Aang23" })
+@Plugin(id = "globaltab", name = "GlobalTab", version = "1.1.0", description = "A plugin", authors = { "Aang23" }, dependencies = @Dependency(id = "luckperms"))
 public class GlobalTab {
+
     public final ProxyServer server;
     public final CommandManager commandManager;
     public final Logger logger;
     public final ConfigManager configManager;
     public final Path configspath;
-    public LuckPerms luckpermsapi;
 
     public TabBuilder tabBuilder;
     public TimerHandler timerHandler;
@@ -62,14 +63,8 @@ public class GlobalTab {
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerHandler,
-                Integer.parseInt((String) configManager.config.get("updatedelay")) * 1000,
-                Integer.parseInt((String) configManager.config.get("updatedelay")) * 1000);
-    }
-
-    @Subscribe
-    public void onInitialization(ProxyInitializeEvent event) {
-        if (server.getPluginManager().isLoaded("luckperms"))
-            luckpermsapi = LuckPermsProvider.get();
+                Integer.parseInt((String) configManager.config.get("updatedelay")) * 1000L,
+                Integer.parseInt((String) configManager.config.get("updatedelay")) * 1000L);
     }
 
     @Subscribe
@@ -99,15 +94,11 @@ public class GlobalTab {
 
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
-        if (!event.getIdentifier().equals(new LegacyChannelIdentifier("GlobalTab"))) {
-            return;
-        }
+        if (!event.getIdentifier().equals(new LegacyChannelIdentifier("GlobalTab"))) return;
 
         event.setResult(PluginMessageEvent.ForwardResult.handled());
 
-        if (!(event.getSource() instanceof ServerConnection)) {
-            return;
-        }
+        if (!(event.getSource() instanceof ServerConnection)) return;
 
         ByteArrayDataInput in = event.dataAsDataStream();
         String subChannel = in.readUTF();
@@ -116,10 +107,8 @@ public class GlobalTab {
             String[] packet = in.readUTF().split(":");
             String username = packet[0];
             Double balance = Double.parseDouble(packet[1]);
-            if (playerBalances.containsKey(username))
-                playerBalances.replace(username, balance);
-            else
-                playerBalances.put(username, balance);
+
+            playerBalances.put(username, balance);
         }
     }
 
@@ -131,6 +120,7 @@ public class GlobalTab {
             containedUUIDs.add(current.getProfile().getId());
             cache.put(current.getProfile().getId(), current);
         }
+
         if (!containedUUIDs.contains(inUUID)) {
             list.addEntry(entry);
             toKeep.add(inUUID);

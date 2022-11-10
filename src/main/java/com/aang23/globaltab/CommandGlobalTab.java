@@ -9,7 +9,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class CommandGlobalTab implements SimpleCommand {
 
-    private GlobalTab plugin;
+    private final GlobalTab plugin;
 
     public CommandGlobalTab(GlobalTab plugin) {
         this.plugin = plugin;
@@ -19,23 +19,28 @@ public class CommandGlobalTab implements SimpleCommand {
     public void execute(final Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
+
         if (args.length > 0) {
             if (args[0].equals("restart")) {
                 plugin.timerHandler.stop = true;
 
                 Timer timer = new Timer();
                 timer.scheduleAtFixedRate(plugin.timerHandler,
-                        Integer.parseInt((String) plugin.configManager.config.get("updatedelay")) * 1000,
-                        Integer.parseInt((String) plugin.configManager.config.get("updatedelay")) * 1000);
+                        Integer.parseInt((String) plugin.configManager.config.get("updatedelay")) * 1000L,
+                        Integer.parseInt((String) plugin.configManager.config.get("updatedelay")) * 1000L);
 
                 source.sendMessage(Component.text("Restarted the tab !", NamedTextColor.GREEN));
-            } else if (args[0].equals("config")) {
+                return;
+            }
+
+            if (args[0].equals("config")) {
                 plugin.configManager.setupConfig();
 
                 source.sendMessage(Component.text("Reloaded the configuration file !", NamedTextColor.GREEN));
+                return;
             }
-        } else
-            source.sendMessage(Component.text("Usage : /globaltab restart/config", NamedTextColor.RED));
+        }
+        source.sendMessage(Component.text("Usage : /globaltab restart/config", NamedTextColor.RED));
     }
 
     @Override
