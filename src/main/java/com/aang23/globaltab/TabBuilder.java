@@ -7,14 +7,13 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class TabBuilder {
 
-    private GlobalTab plugin;
+    private final GlobalTab plugin;
 
     public TabBuilder(GlobalTab plugin) {
         this.plugin = plugin;
     }
 
     public Component formatPlayerTab(String raw, Player player) {
-
         raw = raw.replace("%username%", player.getUsername());
         raw = raw.replace("%prefix%", plugin.userInfoGetter.getPrefixFromUsername(player.getUsername()));
         raw = raw.replace("%suffix%", plugin.userInfoGetter.getSuffixFromUsername(player.getUsername()));
@@ -24,7 +23,6 @@ public class TabBuilder {
     }
 
     public Component formatCustomTab(String raw, Player player) {
-
         raw = raw.replace("%username%", player.getUsername());
         raw = raw.replace("%prefix%", plugin.userInfoGetter.getPrefixFromUsername(player.getUsername()));
         raw = raw.replace("%suffix%", plugin.userInfoGetter.getSuffixFromUsername(player.getUsername()));
@@ -44,21 +42,21 @@ public class TabBuilder {
     private String getCurrentServer(Player player) {
         if (player.getCurrentServer().isPresent())
             return player.getCurrentServer().get().getServerInfo().getName();
-        else
-            return "null";
+
+        return "null";
     }
 
     private String getBalance(Player player) {
         if (plugin.playerBalances.containsKey(player.getUsername()))
             return String.valueOf(plugin.playerBalances.get(player.getUsername()));
-        else
-            return "null";
+
+        return "null";
     }
 
     private String getServerPlayerCount(Player player) {
         if (player.getCurrentServer().isPresent())
             return String.valueOf(player.getCurrentServer().get().getServer().getPlayersConnected().size());
-        else
-            return "null";
+
+        return "null";
     }
 }

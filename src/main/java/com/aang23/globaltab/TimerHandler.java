@@ -9,10 +9,11 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.player.TabListEntry;
 import com.velocitypowered.api.util.GameProfile;
+import net.kyori.adventure.text.Component;
 
 public class TimerHandler extends TimerTask {
 
-	private GlobalTab plugin;
+	private final GlobalTab plugin;
 
 	public boolean stop = false;
 
@@ -32,19 +33,16 @@ public class TimerHandler extends TimerTask {
 			if (server.getPlayerCount() > 0) {
 				for (Player currentPlayerToProcess : server.getAllPlayers()) {
 					if (plugin.configManager.isServerAllowed(currentPlayerToProcess.getCurrentServer())) {
-
 						List<UUID> toKeep = new ArrayList<>();
 
 						for (int i2 = 0; i2 < server.getPlayerCount(); i2++) {
 							Player currentPlayer = (Player) server.getAllPlayers().toArray()[i2];
 
 							TabListEntry currentEntry = TabListEntry.builder().profile(currentPlayer.getGameProfile())
-									.displayName(plugin.tabBuilder.formatPlayerTab(
-											(String) plugin.configManager.config.get("player_format"), currentPlayer))
+									.displayName(plugin.tabBuilder.formatPlayerTab((String) plugin.configManager.config.get("player_format"), currentPlayer))
 									.tabList(currentPlayerToProcess.getTabList()).build();
 
-							plugin.insertIntoTabListCleanly(currentPlayerToProcess.getTabList(), currentEntry,
-									toKeep);
+							plugin.insertIntoTabListCleanly(currentPlayerToProcess.getTabList(), currentEntry, toKeep);
 						}
 
 						if (plugin.configManager.customTabsEnabled()) {
@@ -54,12 +52,10 @@ public class TimerHandler extends TimerTask {
 								GameProfile tabProfile = GameProfile.forOfflinePlayer("customTab" + i3);
 
 								TabListEntry currentEntry = TabListEntry.builder().profile(tabProfile)
-										.displayName(
-												plugin.tabBuilder.formatCustomTab(customtabs.get(i3), currentPlayerToProcess))
+										.displayName(plugin.tabBuilder.formatCustomTab(customtabs.get(i3), currentPlayerToProcess))
 										.tabList(currentPlayerToProcess.getTabList()).build();
 
-								plugin.insertIntoTabListCleanly(currentPlayerToProcess.getTabList(), currentEntry,
-										toKeep);
+								plugin.insertIntoTabListCleanly(currentPlayerToProcess.getTabList(), currentEntry, toKeep);
 							}
 						}
 
@@ -67,10 +63,11 @@ public class TimerHandler extends TimerTask {
 							if (!toKeep.contains(current.getProfile().getId()))
 								currentPlayerToProcess.getTabList().removeEntry(current.getProfile().getId());
 						}
-						currentPlayerToProcess.sendPlayerListHeaderAndFooter(plugin.tabBuilder.formatCustomTab((String) plugin.configManager.config.get("header"),
-										currentPlayerToProcess),
-								plugin.tabBuilder.formatCustomTab((String) plugin.configManager.config.get("footer"),
-										currentPlayerToProcess));
+
+						Component header = plugin.tabBuilder.formatCustomTab((String) plugin.configManager.config.get("header"), currentPlayerToProcess);
+						Component footer = plugin.tabBuilder.formatCustomTab((String) plugin.configManager.config.get("footer"), currentPlayerToProcess);
+
+						currentPlayerToProcess.sendPlayerListHeaderAndFooter(header, footer);
 					}
 				}
 			}
