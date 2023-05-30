@@ -10,3 +10,4 @@ Fix /globaltab restart - command doesnt work
 
 Run ./gradlew shadowJar 
 Your jar will be in build/libs
+ 
