@@ -38,6 +38,11 @@ public class TimerHandler extends TimerTask {
 						for (int i2 = 0; i2 < server.getPlayerCount(); i2++) {
 							Player currentPlayer = (Player) server.getAllPlayers().toArray()[i2];
 
+							// If the player's prefix couldn't be found, we ignore him.
+							if (plugin.userInfoGetter.getPrefixFromUsername(currentPlayer.getUsername()).isEmpty()) {
+								continue;
+							}
+
 							TabListEntry currentEntry = TabListEntry.builder().profile(currentPlayer.getGameProfile())
 									.displayName(plugin.tabBuilder.formatPlayerTab((String) plugin.configManager.config.get("player_format"), currentPlayer))
 									.tabList(currentPlayerToProcess.getTabList()).build();
